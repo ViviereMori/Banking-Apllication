@@ -1,0 +1,167 @@
+import java.util.Scanner;
+import java.util.Random;
+
+
+public class Main {
+    // Static variables shared across the class
+    static double checkingBalance; //  starting checking account balance
+    static double savingsBalance = 10000.0; // Default starting savings account balance
+    static double investmentBalance; // starting investment account balance
+    static double teslaSharePrice; // Placeholder for the price per share of Tesla
+
+    public static void main(String[] args) {
+        Random randGen = new Random(); // Random generator for various purposes
+        Scanner scnr = new Scanner(System.in); // Scanner for reading user input
+        teslaSharePrice = randGen.nextDouble(150.0,200.0); 
+
+        // Set an initial random checking balance up to $2500
+        checkingBalance = randGen.nextDouble() * 2500.0;
+        System.out.println("                            Welcome To Suave Banking!");
+        System.out.print("Checking balance: ");
+        System.out.printf("%.2f\n", checkingBalance);
+
+        // Prompt user for the initial investment amount and adjust balances
+        System.out.print("Enter the initial amount to invest in the SCHWAB investment account: $");
+        investmentBalance = scnr.nextDouble();
+        savingsBalance -= investmentBalance;
+
+        // Main menu for the banking app
+        boolean exitProgram = false;
+   while (!exitProgram) {
+              displayMainMenu();
+              String option = scnr.next();
+              switch (option.toUpperCase()) {
+                  case "C":
+                      clearScreen();
+                      displayBalances();
+                      break;
+                  case "T":
+                      clearScreen();
+                      handleTransactions(scnr);
+                      break;
+                  case "Q":
+                     clearScreen();
+                      System.out.println("Quitting...");
+                      exitProgram = true;
+                      break;
+                  default:
+                      clearScreen();
+                      System.out.println("Invalid option. Please try again.");
+                      break;
+              }
+          }
+          scnr.close(); 
+      }
+
+      public static void displayMainMenu() {
+          System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+          System.out.println("~                      Suave Banking                       ~");
+          System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+          System.out.println("~ Welcome to the main menu. Please select an option below: ~");
+          System.out.println("~                                                          ~");
+          System.out.println("~ [C] Check Balances       - View balances of all accounts ~");
+          System.out.println("~ [T] Transactions         - Manage transactions           ~");
+          System.out.println("~ [Q] Quit                 - Exit the application          ~");
+          System.out.println("~                                                          ~");
+          System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+          System.out.print("Enter your choice: ");
+      }
+
+      public static void clearScreen() {
+          for (int i = 0; i < 100; i++) { // Prints 100 blank lines
+              System.out.println();
+          }
+      }
+
+    // Display current balances of all accounts
+    public static void displayBalances() {
+        System.out.printf("Checking Account Balance: $%.2f\n", checkingBalance);
+        System.out.printf("Savings Account Balance: $%.2f\n", savingsBalance);
+        System.out.printf("Investment Account Balance: $%.2f\n", investmentBalance);
+    }
+
+    // Handles different types of transactions
+    public static void handleTransactions(Scanner scnr) {
+        System.out.println("\n   Transactions Menu");
+        System.out.println("- Apply Interest to Savings   [I]");
+        System.out.println("- Transfer to Investment      [T]");
+        System.out.println("- Buy Shares                  [B]");
+        System.out.println("- Pay School Fees             [P]");
+        System.out.println("Choose an option:");
+        String option = scnr.next();
+        switch (option.toUpperCase()) {
+            case "I":
+                clearScreen();
+                applyInterestToSavings();
+                break;
+            case "T":
+              clearScreen();
+                transferFunds(scnr);
+                break;
+            case "B":
+                clearScreen();
+                purchaseShares(scnr);
+                break;
+            case "P":
+                clearScreen();
+                payFees(scnr);
+                break;
+            default:
+                clearScreen();
+                System.out.println("Invalid option. Please try again.");
+                break;
+        }
+    }
+
+    // Apply interest to the savings account
+    public static void applyInterestToSavings() {
+        double interestRate = 0.075; // 7.5% interest rate
+        double interest = savingsBalance * interestRate;
+        savingsBalance += interest;
+        System.out.printf("Interest added to Savings Account: $%.2f, New Balance: $%.2f\n", interest, savingsBalance);
+    }
+
+    // Transfer a percentage of savings to the investment account
+    public static void transferFunds(Scanner scnr) {
+        System.out.print("Enter percentage of Savings to transfer to Investment: ");
+        double percentage = scnr.nextDouble();
+        if (percentage > 25) {
+            System.out.println("Transfer amount exceeds 25% of Savings. Transfer not allowed.");
+            while (percentage > 25) {
+                System.out.println("Enter valid percentage amount: ");
+                percentage = scnr.nextDouble();
+            }
+        }
+        double amount = savingsBalance * (percentage / 100);
+        savingsBalance -= amount;
+        investmentBalance += amount;
+        System.out.printf("Transferred $%.2f from Savings to Investment, New Savings Balance: $%.2f, New Investment Balance: $%.2f\n", amount, savingsBalance, investmentBalance);
+    }
+
+    // Handles purchasing shares of Tesla
+    public static void purchaseShares(Scanner scnr) {
+      System.out.println("        April 26, 2024");
+      System.out.printf("Tesla Price Per Share: $%.2f\n", teslaSharePrice);
+        System.out.print("Enter number of Tesla shares to buy: ");
+        int shares = scnr.nextInt();
+        double cost = shares * teslaSharePrice;
+        if (investmentBalance >= cost) {
+            investmentBalance -= cost;
+            System.out.printf("Purchased %d shares of Tesla for $%.2f, New Investment Balance: $%.2f\n", shares, cost, investmentBalance);
+        } else {
+            System.out.println("Insufficient funds to purchase shares.");
+        }
+    }
+
+    // Pay school fees from the checking account
+    public static void payFees(Scanner scnr) {
+        System.out.print("Enter amount to pay for school fees from Checking: ");
+        double amount = scnr.nextDouble();
+        if (checkingBalance >= amount) {
+            checkingBalance -= amount;
+            System.out.printf("Paid $%.2f for school fees, New Checking Balance: $%.2f\n", amount, checkingBalance);
+        } else {
+            System.out.println("Insufficient funds to pay fees.");
+        }
+    }
+}
