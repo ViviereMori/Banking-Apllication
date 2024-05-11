@@ -1,1 +1,153 @@
+import java.util.Scanner;
+import java.util.Random;
 
+public class Main {
+  // displayMenu method
+  public static void displayMenu() {
+    System.out.println(" ___________________________");
+    System.out.println("|  * * * Suave Banking* * *  |");
+    System.out.println("|---------------------------|");
+    System.out.println("|- Check Balance         [C]|");
+    System.out.println("|- Deposit               [D]|");
+    System.out.println("|- Withdraw              [W]|");
+    System.out.println("|- Interest              [I]|");
+    System.out.println("|- Previous Transaction  [P]|");
+    System.out.println("|- Quit                  [Q]|");
+    System.out.println("|---------------------------|");
+    System.out.println("|   ~ Choose an option ~    |");
+    System.out.println("|___________________________| ");
+    System.out.println();
+  }
+  public static void main(String[] args) {
+    Scanner scnr = new Scanner(System.in);
+    char menuOp;                                          // user's menu option
+    double balance = 0.0;                                 // user's balance
+    double withdraw = 0.0;                                // withdraw amount
+    double depo = 0.0;                                    // deposit amount
+    double addedInterest = 0.0;                           // added interest
+    char[] preTransaction = new char[1];                  // previous user option
+    Random randGen = new Random();                        // random number generator
+
+    // user's start balance is a random number between 1 and 5,000
+    balance = randGen.nextDouble(5000 - 1) + 1;
+    System.out.print("Your current balance is: $");
+    System.out.printf("%.2f\n", balance);
+    System.out.println();
+
+    while (true) {
+      displayMenu();                                      // display menu
+      menuOp = scnr.next().charAt(0);
+      // check balance
+      if (menuOp == 'c' || menuOp == 'C') {
+        System.out.print("Available Balance: $");
+        System.out.printf("%.2f\n", balance);
+      }
+      // deposit
+      else if (menuOp == 'd' || menuOp == 'D') {
+        //deposit();
+        depo = deposit();
+        balance = balance + depo;
+        System.out.print("New Balance: $");
+        System.out.printf("%.2f\n", balance);
+        preTransaction[0] = 'd';
+      }
+      // withdraw
+      else if (menuOp == 'w' || menuOp == 'W') {
+        // if balance is 0, cancel withdrawal
+        if (balance == 0) {
+          System.out.println("You don't have any money to withdraw.");
+          continue;
+        }
+        System.out.println("Withdraw Amount:");
+        withdraw = scnr.nextDouble();
+        // if withdrawal is negative or greater than balance, prompt user for new withdrawal
+        while (withdraw < 0 || withdraw > balance) {
+          System.out.println("Withdrawing more than your balance or less than $0 is forbidden.");
+          System.out.println("Withdraw Amount:");
+          withdraw = scnr.nextDouble();
+        }
+        // if withdrawal is 0, cancel
+        if (withdraw == 0) {
+          System.out.println("Withdraw cancelled");
+          continue;
+        }
+        balance = balance - withdraw;
+        System.out.print("New balance: $");
+        System.out.printf("%.2f\n", balance);
+        preTransaction[0] = 'w';
+      }
+      // interest
+      else if (menuOp == 'i' || menuOp == 'I') {
+        // if balance is 0, cancel interest calculation
+        if (balance == 0) {
+          System.out.println("Interest was not applied, you have no money.");
+          continue;
+        }
+        System.out.println("Interest Rate: 5%");
+        addedInterest = balance * 0.05;
+        balance = balance + addedInterest;
+        System.out.print("Interest Applied: +$");
+        System.out.printf("%.2f\n", addedInterest);
+        System.out.println("...");
+        System.out.print("New balance: $");
+        System.out.printf("%.2f\n", balance);
+        preTransaction[0] = 'i';
+      }
+      // previous transaction
+      else if (menuOp == 'p' || menuOp == 'P') {
+        // get previous deposit
+        if (preTransaction[0] == 'd' || preTransaction[0] == 'D') {
+          System.out.println("Previous Transaction: ");
+          System.out.print("Deposit of $");
+          System.out.printf("%.2f\n", depo);
+        }
+        // get previous withdrawal
+        else if (preTransaction[0] == 'w' || preTransaction[0] == 'W') {
+          System.out.println("Previous Transaction: ");
+          System.out.print("Withdrawal of $");
+          System.out.printf("%.2f\n", withdraw);
+        }
+        // get previous interest calculation
+        else if (preTransaction[0] == 'i' || preTransaction[0] == 'I') {
+          System.out.println("Previous Transaction: ");
+          System.out.print("Interest applied: $");
+          System.out.printf("%.2f\n", addedInterest);
+        }
+        // if no previous transaction, display message  
+        else {
+          System.out.println("No previous transaction.");
+        }
+      }
+      // quit
+      else if (menuOp == 'q' || menuOp == 'Q') {
+        System.out.println("Quitting..");
+        break;
+      }
+      // invalid option
+      else {
+        System.out.println("Not a menu option.");
+      }
+    }
+  }
+  public static double deposit() {
+    Scanner scnr = new Scanner(System.in);
+
+    while (true) {
+      System.out.println("Deposit Amount:");
+      double depo = scnr.nextDouble();
+      // if deposit is negative, prompt user for new deposit
+      while (depo < 0) {
+        System.out.println("Invalid amount. Please enter a number greater than $0.");
+        System.out.println("Deposit Amount:");
+        depo = scnr.nextDouble();
+      }
+      // if deposit is 0, or isn't a double, cancel
+      if (depo == 0) {
+        System.out.println("Deposit cancelled");
+        break;
+      }
+       return depo;
+    }
+    return 0;
+  }
+}
